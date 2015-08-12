@@ -1,0 +1,60 @@
+<div id="sideBar">
+    <div></div>
+</div>
+<div id="wrapper">
+    <div class="gTab">
+        
+    <div class="dropdown">
+<!--        <button type="button" class="btn btn-primary">Week</button>-->
+        <button type="button" class="btn btn-primary dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Week
+            <span class="caret"></span>
+        </button>
+        
+        <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+            <li>
+                <a href="https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/drive.metadata.readonly&redirect_uri=http://localhost:3000/home/&response_type=code&client_id=981468015509-6n46c29co3unjouhobqdphnki0ev5077.apps.googleusercontent.com">
+                    <div id="gLogin">
+                        <i class="fa fa-google" style="color: rgba(255, 255, 255, 1);"></i>
+                    </div>
+                     Google
+                </a>
+            </li>
+            <li role="separator" class="divider"></li>
+            <li>
+    <!--            <button class="btn btn-default" ng-click="homeCtrl.getDriveMeta(1)">-->
+                <a ng-click="homeCtrl.getDriveMeta(1)">
+                    <span class="glyphicon glyphicon-check"></span> Week 1
+                </a> 
+            </li>
+            <li>
+                <a ng-click="homeCtrl.getDriveMeta(2)">
+                    <span class="glyphicon glyphicon-check"></span> Week 2
+                </a>
+            </li>
+            <li>
+                <a ng-click="homeCtrl.getDriveMeta(3)">
+                    <span class="glyphicon glyphicon-check"></span> Week 3
+                </a>
+            </li>
+            <li>
+                <a ng-click="homeCtrl.getDriveMeta(4)">
+                    <span class="glyphicon glyphicon-check"></span> Week 4
+                </a>
+            </li>
+        </ul>
+        
+    </div>
+    
+    </div>
+
+<div class="jumbotron" style="min-height: 470px;">
+   <h3 class="page-header">{{homeCtrl.title}}</h3>
+   <ul ng-repeat="names in homeCtrl.handOver" style="list-style: none;" class="row">
+
+        <li id="member" ng-repeat="name in names" class="col-md-1" ng-class="{'handOver': name.handOver, 'missing': !name.handOver}">
+            {{name.name}}
+        </li>
+   </ul>
+</div>
+</div>

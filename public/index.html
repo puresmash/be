@@ -1,0 +1,79 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+    <link rel="stylesheet" type="text/css" href="/bower_components/bootstrap/dist/css/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="./css/gDrive.css"/>
+    <style>
+        .notename.ng-dirty.ng-invalid-required {
+            background-color: deeppink;   
+        }
+        .notename.ng-dirty.ng-invalid-minlength {
+            background-color: deeppink;   
+        }
+    </style>
+    
+<!--
+    <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDdpbWMntHc3XIY16UK48sCXG_LUfg327k">
+    </script>
+-->
+    
+</head>
+<body ng-app="SwatAngular">
+<!--    Original Page by Express-->
+    
+    
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <a ng-href="#/" class="navbar-brand">Swat</a>
+            <ul class="nav navbar-nav">
+                <li><a ng-href="#/home">Home</a></li>
+<!--
+                <li><a ng-href="#/find">Find</a></li>
+                <li><a ng-href="#/note">Note</a></li>
+                <li><a ng-href="#/chat">Chat</a></li>
+                <li><a ng-href="#/about">About</a></li>
+-->
+            </ul>
+            
+        </div>   
+    </nav>
+    
+    <div>
+        <section>
+        <div ng-View >
+            
+        </div>
+        </section>
+    </div>
+    
+<!--
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js">
+    </script>
+-->
+    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+    
+    <script src="/bower_components/angular/angular.js"></script>
+    <script src="/bower_components/angular-route/angular-route.min.js">
+    </script>
+    <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js">
+    </script>
+<!--
+    <script src="/bower_components/bootstrap/js/dropdown.js">
+    </script>
+-->
+    
+    <!--route-->
+    <script src="./js/app.js"></script>
+    
+    <!--contraoller-->
+    <!--    
+        <script src="./js/controllers/test-Angular-Controller.js"></script>
+    -->
+    <script src="./js/controllers/G-Drive-Controller.js"></script>
+    
+</body>
+</html>
