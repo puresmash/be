@@ -15,8 +15,11 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
+app.use(require('cookie-parser')());
+app.use(require('express-session')({secret: 'olaolaola'}));
 
-app.set('port', process.env.PORT || 3000);
+app.set('ip', process.env.OPENSHIFT_NODEJS_IP || "127.0.0.1");
+app.set('port', process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 3000);
 
 app.use(express.static(__dirname + '/public'));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
@@ -39,16 +42,12 @@ var token;
 app.get('/getDrive', function(req, res){
     var code = req.query.token;
     var week = req.query.week;
-    var promise = authorize(''/*JSON.parse(content)*/, code, week, searchFile);
+    var promise = authorize(''/*JSON.parse(content)*/, code, week, req, searchFile);
 
     q.all(promise).then(function(result){
         console.log('Already Handover : '+result);
         res.status(200).json(result);
     });
-    
-   
-    
-    
     
 });
 
@@ -102,9 +101,9 @@ app.use(function(err, req, res, next){
 	res.render('500');
 });
 
-app.listen(app.get('port'), function(){
-    console.log('Express started on http://localhost:' + 
-		app.get('port') + '; press Ctrl-C to terminate...');
+app.listen(app.get('port'), app.get('ip'), function(){
+    console.log('Express started on http://localhost:' +
+                app.get('port') + '; press Ctrl-C to terminate...');
 });
 
 
@@ -138,7 +137,7 @@ function configAuth(){
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
-function authorize(credentials, code, week, callback) {
+function authorize(credentials, code, week, req, callback) {
 //  var clientSecret = "hHVw25vkxDY3dKfa4U1gKQcA";
     //credentials.installed.client_secret;
 //  var clientId = "981468015509-6n46c29co3unjouhobqdphnki0ev5077.apps.googleusercontent.com";
@@ -153,26 +152,38 @@ function authorize(credentials, code, week, callback) {
     
     console.log('@CoDe@'+code);
     
-    oauth2Client.generateAuthUrl({
-        access_type: 'offline',
-        scope: SCOPES
-    });
-    //getNewToken(oauth2Client, callback);
-    var deferred = q.defer();
-    oauth2Client.getToken(code, function(err, tokens) {
-      if (err) {
-        console.log('Error while trying to retrieve access token', err);
-        deferred.reject();
-        return;
-      }
-      oauth2Client.credentials = tokens;
-      //storeToken(token);
-      console.log('I am here');
-      var result = callback(oauth2Client, week);
-      deferred.resolve(result);
-        
-    });
-    return deferred.promise;
+    if(req.session.token){
+        console.log("TOKEN IN SESSION IS: " + req.session.token);
+        oauth2Client.credentials = req.session.token;
+        return result = callback(oauth2Client, week);
+    }
+    else{
+    
+        oauth2Client.generateAuthUrl({
+            access_type: 'offline',
+            scope: SCOPES
+        });
+        //getNewToken(oauth2Client, callback);
+
+
+        var deferred = q.defer();
+        oauth2Client.getToken(code, function(err, tokens) {
+          if (err) {
+            console.log('Error while trying to retrieve access token', err);
+            deferred.reject();
+            return;
+          }
+          req.session.token = tokens;
+          oauth2Client.credentials = tokens;
+          //storeToken(token);
+          console.log('I am here');
+          var result = callback(oauth2Client, week);
+          deferred.resolve(result);
+
+        });
+        return deferred.promise;
+    }
+    
 
 //    oauth2Client.credentials = code;
 //    callback(oauth2Client);
