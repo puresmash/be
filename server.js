@@ -9,6 +9,16 @@ var lodash = require('lodash');
 var google = require('googleapis');
 var googleAuth = require('google-auth-library');
 
+var credentials = require('./credentials.js')
+var mysql = require('mysql');
+
+var db;
+if(process.env.NPM_CONFIG_PRODUCTION)
+    db = mysql.createConnection(credentials.mysql.product.connectionString);
+else
+    db = mysql.createConnection(credentials.mysql.dev.connectionString);
+db.connect();
+
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({
     extended: true
@@ -24,7 +34,7 @@ app.set('port', process.env.OPENSHIFT_NODEJS_PORT || process.env.PORT || 3000);
 app.use(express.static(__dirname + '/public'));
 app.use('/bower_components', express.static(__dirname + '/bower_components'));
 
-var blocks = [];
+//var blocks = [];
 //app.get('/', function(req, res){
 //    res.status(200).json('Hello World');
 //});
@@ -49,6 +59,31 @@ app.get('/getDrive', function(req, res){
         res.status(200).json(result);
     });
     
+});
+
+app.get('/getUsers', function(req, res){
+    db.query("SELECT id, nickname, enroll, color, t_id FROM be.user WHERE t_id>0 ORDER BY t_id", function(err, result){
+        if(err){
+            console.log(err);
+            return;
+        }
+        var users = [[],[],[],[],[],[],[]];
+        console.log(users);
+        result.forEach(function(user){
+            
+            var team = user.t_id;
+
+//            if(!users[team]){
+//                users[team] = [];
+//            }
+            users[team].push(user);
+            
+        });
+//        console.log(result);
+        console.log(users);
+        res.status(200).json({users: users});
+        
+    });
 });
 
 app.get('/getPlaces', function(req, res){
@@ -79,14 +114,44 @@ app.get('/getNews', function(req, res){
         .json({news: 'Hello WebService with NodeJS & mvc with AngularJS'});
 });
 
+//app.get('/getMember', function(req, res){
+//    db.query("SELECT user.id, user.nickname FROM be.user ORDER BY t_id;", [], function(err, result){
+//        if(err){
+//            console.log(err);
+//            return;
+//        }
+//        console.log(result);
+//        res.status(200).json({notes: result});  
+//    });
+//});
+
 app.get('/getNote', function(req, res){
-    res.status(200).json({notes: blocks});
+    var id = req.query.id || 0;
+    console.log('ID='+id);
+    db.query("SELECT * FROM be.message LEFT JOIN be.user ON message.u_id = user.id WHERE user.id = ?", [id], function(err, result){
+        if(err){
+            console.log(err);
+            return;
+        }
+        
+//        console.log(result);
+        res.status(200).json({notes: result});
+        
+    });
+//    res.status(200).json({notes: blocks});
 });
 
-app.post('/saveData', function(req, res){
+app.post('/saveNote', function(req, res){
     var newBlock = req.body;
-    blocks.push({name: newBlock.name, description: newBlock.description});
-    console.log(blocks);
+//    blocks.push({name: newBlock.name, description: newBlock.description});
+//    console.log(blocks);
+    db.query("INSERT INTO be.message(msg, u_id) VALUES(?, ?)", ['testjs', 0], function(err, result){
+        if(err)
+            console.log(err);
+        else
+            console.log(result);
+    });
+    
     res.status(201).json(newBlock.name);
 });
 
@@ -204,15 +269,32 @@ function searchFile(auth, week){
     var template = [['WK 1','WK1', '第一週', '第一週行動表', '第1週'],
                     ['WK 2','WK2', '第二週', '第二週行動表', '第2週'],
                     ['WK 3','WK3', '第三週', '第三週行動表', '第3週'],
-                    ['WK 4','WK4', '第四週', '第四週行動表', '第4週'] ];
+                    ['WK 4','WK4', '第四週', '第四週行動表', '第4週'],
+                    ['WK 5','WK5', '第五週', '第五週行動表', '第5週']];
     
     // Retrieve Member From File
     var mPath = __dirname+'/properties/memberList.json';
     var jsonStr = fs.readFileSync(mPath);
     var member = JSON.parse(jsonStr);
     
-//    console.log(mPath);
-//    console.log(member);
+//    var users={};
+//    db.query("SELECT id, nickname, enroll, color, t_id FROM be.user WHERE t_id>0 ORDER BY t_id ", [], function(err, result){
+//        if(err){
+//            console.log(err);
+//            return;
+//        }
+//            
+//        result.forEach(function(user){
+//            
+//            var team = user.t_id;
+//            console.log('team'+team);
+//            if(!users[team]){
+//                users[team] = {'mAry': [], 'folder': member[team].folder, 'leader': member[team].leader};
+//            }
+//            users[team].mAry.push({'id': user.id, 'nickname': user.nickname});
+//            
+//        });
+//    });
     
     
     // Check For Each Team
@@ -226,8 +308,7 @@ function searchFile(auth, week){
     
 }
 
-function searchName(auth, template, folderId, names){
-    
+function searchName(auth, template, folderId, users){
     
     var promise = listFiles(auth, folderId);
     return promise.then(function(response){
@@ -252,20 +333,27 @@ function searchName(auth, template, folderId, names){
         var promise = listFiles(auth, folderId);
         return promise.then(function(response){
             var teamFiles = response[0].items;
-            //console.log("NAmes = " + names);
+            //console.log("Users = " + users);
             
             //new
-            var handOver = names.map(function(name){
+            var handOver = {};
+            users.forEach(function(user){
+                var name = user.nickname;
+                var id = user.id;
                 for (var j = 0; j < teamFiles.length; j++) {
                     var file = teamFiles[j];
+                    
                     var bool = lodash.includes(file.title.toLowerCase(), name.toLowerCase());
                     
                     if(bool){
                         console.log('%s (%s)', file.title.toLowerCase(), name.toLowerCase());
-                        return {'name': name, 'handOver': true};
+                        handOver[id] = true;
+                        return;
+//                        return {'name': name, 'id': id, 'handOver': true};
                     }
                 }
-                return {'name': name, 'handOver': false};
+                handOver[id] = false;
+//                return {'name': name, 'id': id, 'handOver': false};
             });
             
             return handOver;
@@ -277,7 +365,7 @@ function searchName(auth, template, folderId, names){
 }
 
 /**
- * Lists the names and IDs of up to 10 files.
+ * Lists the users and IDs of up to 10 files.
  *
  * @param {google.auth.OAuth2} auth An authorized OAuth2 client.
  */

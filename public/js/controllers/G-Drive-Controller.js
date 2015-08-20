@@ -14,13 +14,44 @@ angular.module('SwatAngular')
             var path = '/getDrive?token='+controller.token+"&week="+week;
             
             $http({url:path, method:'GET'}).success(function(getData){
-                console.log(getData);
-                controller.handOver = getData;
+                var ary = [];
+                
+                for(var i = 0; i < getData.length; i++){
+                    for(key in getData[i]){
+                        ary[key] = getData[i][key];   
+                    }
+                }
+                
+                console.log(ary);
+                controller.handOverMap = ary;
                 
             });
         }
     
     
+    };
+    
+//    this.getUsers = function(){
+        $http({url:'/getUsers', method:'GET'}).success(function(getData){
+            controller.users = getData.users;
+            console.log(getData);
+        });
+//    };
+
+    this.getNote = function(id){
+        $http({url:'/getNote?id='+id, method:'GET'}).success(function(getData){
+            controller.notes = getData.notes;
+            console.log(controller.notes);
+        });
+    };
+    
+    
+    this.saveNote = function(note){
+        console.log(note);
+        $http({url: '/saveNote', method:'POST', data: note})
+        .catch(function(note){
+            controller.errors = note.data.error;
+        });  
     };
     
     

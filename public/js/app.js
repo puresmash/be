@@ -13,10 +13,10 @@ angular.module('SwatAngular', ['ngRoute'])
         templateUrl: 'templates/pages/note.html',
         controller: 'NoteController',
         controllerAs: 'noteCtrl'
-    })
-    .otherwise('', {
-        redirectTo: '/home'
-        
     });
+//    .otherwise('', {
+//        redirectTo: '/home'
+//        
+//    });
      
 }]);
