@@ -38,10 +38,10 @@
             <ul class="nav navbar-nav">
                 <li><a ng-href="#/home">Home</a></li>
                 <li>
-                    <a href="#week">Week</a>
+                    <a id="anchor" href="#week">Week</a>
                 </li>
                 <li>
-                    <a>Enroll</a>
+                    <a id="anchor" href="#enroll">Enroll</a>
                 </li>
                 <!--
                 <li><a ng-href="#/find">Find</a></li>
@@ -103,8 +103,27 @@
 
 
     <script>
+        $(function(){
+            $('a#anchor').on('click', function(){
+                $('html, body').animate({
+                    scrollTop: $( $.attr(this, 'href') ).offset().top
+                }, 500);
+                event.preventDefault();
+            });
+        });
+        
         function onSuccess(googleUser) {
             var profile = googleUser.getBasicProfile();
+            var id_token = googleUser.getAuthResponse().id_token;
+            
+            $.ajax('/storeToken', {
+                type: 'POST',
+                data: {id_token: id_token},
+                success: function(){
+                    console.log(profile.getName() + ', log in success!');
+                }
+            });
+            
             console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
             console.log('Name: ' + profile.getName());
             console.log('Image URL: ' + profile.getImageUrl());

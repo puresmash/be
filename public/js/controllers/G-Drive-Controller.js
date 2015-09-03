@@ -4,16 +4,16 @@ angular.module('SwatAngular')
     
     console.log("CoDe = " + $routeParams.token);
     
-    controller.token = $routeParams.token;
+    controller.code = $routeParams.token;
     
     this.getDriveMeta = function(week){
         controller.title = "第" + week +"週繳交狀況";
         controller.week = week;
             
-        if(controller.token){
-            var path = '/getDrive?token='+controller.token+"&week="+week;
-            
-            $http({url:path, method:'GET'}).success(function(getData){
+//        if(controller.token){
+            var path = '/getDrive';//?token='+controller.token+"&week="+week;
+            console.log('GET DRIVE');
+            $http({url:path, method:'POST', data:{code: controller.code, week: week, user: ''}}).success(function(getData){
                 var ary = [];
                 
                 for(var i = 0; i < getData.length; i++){
@@ -25,8 +25,17 @@ angular.module('SwatAngular')
                 console.log(ary);
                 controller.handOverMap = ary;
                 
+            }).error(function(getData, status, c, d, e){
+                controller.error = getData;
+                console.log(getData);
+                console.log("status:"+status);
+                console.log(c);
+                console.log(d);
             });
-        }
+//        }
+//        else{
+//            
+//        }
     
     
     };
