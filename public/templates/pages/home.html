@@ -5,55 +5,55 @@
 -->
 <section id="week" class="s1">
     <div class="background">
+        <div id="week" class="background-mask">
 
-    </div>
-    <div id="week" class="background-mask">
+            <div class="gTab">
 
-        <div class="gTab">
+                <div class="dropdown">
+                    <button type="button" class="btn btn-primary dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Week
+                        <span class="caret"></span>
+                    </button>
 
-            <div class="dropdown">
-                <button type="button" class="btn btn-primary dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Week
-                    <span class="caret"></span>
-                </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                        <li>
+                            <a href="https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/drive.metadata.readonly&redirect_uri=http://localhost:3000/home/&response_type=code&client_id=981468015509-6n46c29co3unjouhobqdphnki0ev5077.apps.googleusercontent.com&access_type=offline&approval_prompt=force">
+                                <div id="gLogin">
+                                    <i class="fa fa-google" style="color: rgba(255, 255, 255, 1);"></i>
+                                </div>
+                                Google
+                            </a>
+                        </li>
+                        <li role="separator" class="divider"></li>
+                        <li>
+                            <a ng-click="homeCtrl.getDriveMeta(7)">
+                                <span class="glyphicon glyphicon-check"></span> Week 7
+                            </a>
+                        </li>
+                    </ul>
 
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                    <li>
-                        <a href="https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/drive.metadata.readonly&redirect_uri=http://localhost:3000/home/&response_type=code&client_id=981468015509-6n46c29co3unjouhobqdphnki0ev5077.apps.googleusercontent.com&access_type=offline&approval_prompt=force">
-                            <div id="gLogin">
-                                <i class="fa fa-google" style="color: rgba(255, 255, 255, 1);"></i>
-                            </div>
-                            Google
-                        </a>
-                    </li>
-                    <li role="separator" class="divider"></li>
-                    <li>
-                        <a ng-click="homeCtrl.getDriveMeta(7)">
-                            <span class="glyphicon glyphicon-check"></span> Week 7
-                        </a>
-                    </li>
-                </ul>
+                </div>
 
             </div>
 
-        </div>
+            <div class="panel panel-info" style="min-height: 470px; background-color: rgba(100%,100%,100%, 0.5);">
 
-        <div class="panel panel-info" style="min-height: 470px; background-color: rgba(100%,100%,100%, 0.5);">
+                <div class="panel-body">
+                    <h3>{{homeCtrl.title}}</h3>
+                    <!--                <ul ng-repeat="names in homeCtrl.handOver" style="list-style: none;" class="row">-->
+                    <ul ng-repeat="names in homeCtrl.users" style="list-style: none;" class="row">
 
-            <div class="panel-body">
-                <h3>{{homeCtrl.title}}</h3>
-<!--                <ul ng-repeat="names in homeCtrl.handOver" style="list-style: none;" class="row">-->
-                <ul ng-repeat="names in homeCtrl.users" style="list-style: none;" class="row">
+                        <li id="member" ng-repeat="name in names" class="col-md-1" ng-class="{'handOver': homeCtrl.handOverMap[name.id], 'missing': !homeCtrl.handOverMap[name.id]}">
+                            <a ng-click="homeCtrl.getNote(name.id)">{{name.nickname}}</a>
+                            <span class="glyphicon glyphicon-heart" ng-class="{'eg-green': name.color==='Green', 'eg-red': name.color==='Red', 'eg-blue': name.color==='Blue', 'eg-yellow': name.color==='Yellow'}">{{name.enroll}}</span>
+                        </li>
+                    </ul>
+                </div>
 
-                    <li id="member" ng-repeat="name in names" class="col-md-1" ng-class="{'handOver': homeCtrl.handOverMap[name.id], 'missing': !homeCtrl.handOverMap[name.id]}">
-                        <a ng-click="homeCtrl.getNote(name.id)">{{name.nickname}}</a>
-                        <span class="glyphicon glyphicon-heart" ng-class="{'eg-green': name.color==='Green', 'eg-red': name.color==='Red', 'eg-blue': name.color==='Blue', 'eg-yellow': name.color==='Yellow'}">{{name.enroll}}</span>
-                    </li>
-                </ul>
             </div>
-
         </div>
     </div>
+
 </section>
 
 
@@ -62,7 +62,7 @@
 <section id="enroll" class="s2">
     <div class="container-box">
         <!--Add a New Note-->
-<!--
+        <!--
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h3 class="panel-title">New note</h3>

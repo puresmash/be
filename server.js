@@ -218,8 +218,7 @@ function configAuth(){
     var setting = JSON.parse(jsonStr).web;
     CLIENT_ID = setting.client_id;
     CLIENT_SECRET = setting.client_secret;
-    REDIRECT_URL = setting.redirect_uris[0];
-    
+    REDIRECT_URL = setting.redirect_uris[0];   
 }
 
 //authorize(''/*JSON.parse(content)*/, searchFile);

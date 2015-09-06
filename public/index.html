@@ -7,7 +7,7 @@
     <title>Document</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="/bower_components/bootstrap/dist/css/bootstrap.css" />
-    <link rel="stylesheet" type="text/css" href="./css/gDrive.css" />
+    <link rel="stylesheet" type="text/css" href="./css/style.css" />
     <style>
         .notename.ng-dirty.ng-invalid-required {
             background-color: deeppink;
@@ -32,10 +32,18 @@
 
     <nav class="navbar navbar-default navbar-fixed-top">
         <div class="container">
-            <a ng-href="#/" class="navbar-brand">
-                <img src="./image/logo.jpg" style="border-radius: 50%;"></img>
-            </a>
-            <ul class="nav navbar-nav">
+            <div class="navbar-header">
+                <a ng-href="#/" class="navbar-brand">
+                    <span>BeDoHave</span>
+    <!--                <img src="./image/logo.jpg" style="border-radius: 50%;"></img>-->
+                </a>
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <ul class="nav navbar-nav collapse navbar-collapse">
                 <li><a ng-href="#/home">Home</a></li>
                 <li>
                     <a id="anchor" href="#week">Week</a>
@@ -50,18 +58,23 @@
                 <li><a ng-href="#/about">About</a></li>
 -->
             </ul>
-            <ul class="nav navbar-nav navbar-right">
+            <ul class="nav navbar-nav navbar-right collapse navbar-collapse">
+<!--
                 <li style="padding-top: 7px;">
-                    <div id="my-signin2"></div>
+                    
                 </li>
+-->
                 <li>
-                    <div id="sign-out" style="display:none;">
-                        <span></span>
+                    
+                    <div id="my-signin2"></div>
+                    <div id="sign-out">
+                        <span id="avatar" style="padding: 9px;"></span>
+                        <span id="email"></span>
                         <button onclick="signOut()">Logout</button>
                     </div>
                 </li>
                 <li>
-                    <div id="avatar" style="padding: 9px;"></div>
+                    
                 </li>
             </ul>
 
@@ -133,11 +146,11 @@
             $('#my-signin2').hide();
 
             // Add avatar image
-            $('<img class="avatar" src="' + profile.getImageUrl() + '"></img>').appendTo('div#avatar');
+            $('<img class="avatar" src="' + profile.getImageUrl() + '"></img>').appendTo('span#avatar');
 
             // Display user info
             var signOutDiv = $('div#sign-out');
-            signOutDiv.find('span').text(profile.getEmail());
+            signOutDiv.find('span#email').text(profile.getEmail());
             signOutDiv.show();
 
         }
@@ -149,7 +162,7 @@
                 $('#my-signin2').show();
 
                 $('div#sign-out').hide();
-                $('div#avatar img').remove();
+                $('span#avatar img').remove();
             });
         }
 

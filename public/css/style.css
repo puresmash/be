@@ -1,0 +1,71 @@
+section.s1 {
+  height: 100vh;
+  width: 100%;
+  position: relative;
+  margin: 0 auto; }
+section.s2 {
+  background-color: #879035; }
+
+div.container-box {
+  max-width: 750px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-top: 50px;
+  padding-bottom: 50px; }
+div.background {
+  background: url(../image/BeDoHave.jpg) no-repeat;
+  background-position: center center;
+  background-size: cover;
+  min-height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  z-index: -1; }
+div.background-mask {
+  background: linear-gradient(rgba(133, 126, 116, 0.8), rgba(133, 126, 116, 0.8));
+  padding: 10rem 0 6rem 0;
+  min-height: 100%;
+  width: 100%;
+  top: 0;
+  left: 0; }
+
+li.handOver {
+  background-color: aquamarine; }
+li.missing {
+  background-color: plum; }
+li#member {
+  float: left;
+  border: 1px solid #FFF;
+  height: 60px;
+  width: 120px;
+  text-align: center;
+  line-height: 60px; }
+
+span.eg-green {
+  color: green; }
+span.eg-yellow {
+  color: yellow; }
+span.eg-blue {
+  color: blue; }
+span.eg-red {
+  color: red; }
+
+img.avatar {
+  border-radius: 50%;
+  height: 32px;
+  width: 32px; }
+
+div#gLogin {
+  background-color: orange;
+  padding: 2px 3px 2px 3px;
+  border-radius: 25%; }
+div#my-signin2 {
+  padding: 9px; }
+div#sign-out {
+  display: none; }
+  div#sign-out span {
+    text-overflow: ellipsis;
+    line-height: 50px;
+    font-size: 16px; }
+
+/*# sourceMappingURL=style.css.map */
