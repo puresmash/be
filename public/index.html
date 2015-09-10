@@ -4,6 +4,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
     <meta name="google-signin-client_id" content="981468015509-6n46c29co3unjouhobqdphnki0ev5077.apps.googleusercontent.com">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Document</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
     <link rel="stylesheet" type="text/css" href="/bower_components/bootstrap/dist/css/bootstrap.css" />
@@ -29,64 +30,12 @@
 <body ng-app="SwatAngular">
     <!--    Original Page by Express-->
 
-
-    <nav class="navbar navbar-default navbar-fixed-top">
-        <div class="container">
-            <div class="navbar-header">
-                <a ng-href="#/" class="navbar-brand">
-                    <span>BeDoHave</span>
-    <!--                <img src="./image/logo.jpg" style="border-radius: 50%;"></img>-->
-                </a>
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-            </div>
-            <ul class="nav navbar-nav collapse navbar-collapse">
-                <li><a ng-href="#/home">Home</a></li>
-                <li>
-                    <a id="anchor" href="#week">Week</a>
-                </li>
-                <li>
-                    <a id="anchor" href="#enroll">Enroll</a>
-                </li>
-                <!--
-                <li><a ng-href="#/find">Find</a></li>
-                <li><a ng-href="#/note">Note</a></li>
-                <li><a ng-href="#/chat">Chat</a></li>
-                <li><a ng-href="#/about">About</a></li>
--->
-            </ul>
-            <ul class="nav navbar-nav navbar-right collapse navbar-collapse">
-<!--
-                <li style="padding-top: 7px;">
-                    
-                </li>
--->
-                <li>
-                    
-                    <div id="my-signin2"></div>
-                    <div id="sign-out">
-                        <span id="avatar" style="padding: 9px;"></span>
-                        <span id="email"></span>
-                        <button onclick="signOut()">Logout</button>
-                    </div>
-                </li>
-                <li>
-                    
-                </li>
-            </ul>
-
-        </div>
-    </nav>
-
-    <div>
-
-        <div ng-View>
-
-        </div>
-    </div>
+    <div ng-View></div>
+    
+    <div ng-include='"nav.html"'/>	
+    
+    
+    
 
     <!--
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js">
@@ -95,10 +44,8 @@
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
 
     <script src="/bower_components/angular/angular.js"></script>
-    <script src="/bower_components/angular-route/angular-route.min.js">
-    </script>
-    <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js">
-    </script>
+    <script src="/bower_components/angular-route/angular-route.min.js"></script>
+    <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
     <!--
     <script src="/bower_components/bootstrap/js/dropdown.js">
     </script>
@@ -112,9 +59,10 @@
         <script src="./js/controllers/test-Angular-Controller.js"></script>
     -->
     <script src="./js/controllers/G-Drive-Controller.js"></script>
+    <script src="./js/controllers/nav-Controller.js"></script>
 
 
-
+<!--
     <script>
         $(function(){
             $('a#anchor').on('click', function(){
@@ -128,7 +76,8 @@
         function onSuccess(googleUser) {
             var profile = googleUser.getBasicProfile();
             var id_token = googleUser.getAuthResponse().id_token;
-            
+            var access_token = googleUser['Ka']['access_token'];
+
             $.ajax('/storeToken', {
                 type: 'POST',
                 data: {id_token: id_token},
@@ -136,6 +85,8 @@
                     console.log(profile.getName() + ', log in success!');
                 }
             });
+            
+            console.log(id_token);
             
             console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
             console.log('Name: ' + profile.getName());
@@ -172,7 +123,7 @@
 
         function renderButton() {
             gapi.signin2.render('my-signin2', {
-                'scope': 'profile',
+                'scope': 'profile https://www.googleapis.com/auth/drive.readonly',
                 'width': 120,
                 'height': 36,
                 'longtitle': false,
@@ -182,8 +133,9 @@
             });
         }
     </script>
+-->
 
-    <script src="https://apis.google.com/js/platform.js?onload=renderButton" async defer></script>
+    <script src="https://apis.google.com/js/platform.js?onload=init"></script>
 
 </body>
 

@@ -243,104 +243,80 @@ function authorize(credentials, code, week, req, callback) {
     var auth = new googleAuth();
     var oauth2Client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
     
+    //S1
     if(req.session.tokens){
         console.log("FIND TOKEN IN SESSION: " + req.session.tokens);
         var access_token = req.session.tokens.access_token;
         var refresh_token = req.session.tokens.refresh_token;
+        console.log("AT:"+access_token);
+        console.log("RT:"+refresh_token);
         oauth2Client.setCredentials({ access_token: access_token, refresh_token: refresh_token });
 
         return result = callback(oauth2Client, week);
     }
     
-    //
-    var deferred = q.defer();
-    var promise, promise2;
-    
+    //S2
     var access_token, refresh_token;
-//    if(req.session.email){
-//        console.log('Ready To get Token Form DB');
-//        promise = getTokenFormDB(req.session.email);
-//        return promise.then(function(result){
-//            access_token = result.aToken;
-//            refresh_token = result.rToken;
-//            
-//            if(!access_token || !refresh_token){
-//                console.log('Cannot got token from db, get a new one instead');
-//                
-//                promise2 = genToken(oauth2Client, code);
-//                promise2.then(function(result){
-//                    
-//                    access_token = result.access_token;
-//                    refresh_token = result.refresh_token;
-//                    
-//                    console.log('aT2'+access_token+'rT2'+refresh_token);
-//                    
-//                });
-//                promise2.then(function(result){
-//                    db.query("UPDATE be.user SET 'aToken'='?', 'rToken'='?' WHERE 'email'='?';", [access_token, refresh_token, email], function(err, result){
-//                        if(err)
-//                            console.log(err);
-//                        else
-//                            console.log("update db success");
-//                    
-//                    });
-//                });
-//                
-//                
-//                return promise2.then(function(results){
-//                    console.log('aT:'+access_token+'rT:'+refresh_token);
-//                    oauth2Client.setCredentials({ access_token: access_token, refresh_token: refresh_token });
-//                    return callback(oauth2Client, week);
-//                });
-//            }
-//            else{
-//                oauth2Client.setCredentials({ access_token: access_token, refresh_token: refresh_token });
-//                return callback(oauth2Client, week);
-//            }
-//            
-//             
-//        });
-//        
-//
-//    }
-    
-    
-    promise = genToken(oauth2Client, code);
-    
-    
+   	if(req.session.email){
+      
+       console.log('Ready To get Token Form DB');
+       var email = req.session.email;
+     
+       return getTokenFormDB(req.session.email)         
+         .then(function(result){
+           access_token = result.aToken;
+           refresh_token = result.rToken;
+           
+           if(access_token || refresh_token){
+             oauth2Client.setCredentials({ access_token: access_token, refresh_token: refresh_token });
+             return callback(oauth2Client, week);
+           }
+                  
+           console.log('Cannot got token from db, get a new one instead');
 
-    return promise.then(function(result){
-        access_token = result.access_token;
-        refresh_token = result.refresh_token;
-        console.log("Cannot find tokens in session or db, gen one: " + access_token +", "+refresh_token);
-        oauth2Client.setCredentials({ access_token: access_token, refresh_token: refresh_token });
-        req.session.tokens = result;
-        return callback(oauth2Client, week);
-    });
-    
-//        oauth2Client.generateAuthUrl({
-//            access_type: 'offline',
-//            scope: SCOPES
-//        });
-//
-//        var deferred = q.defer();
-//        oauth2Client.getToken(code, function(err, tokens) {
-//          if (err) {
-//            console.log('Error while trying to retrieve access token', err);
-//            deferred.reject(err);
-//            return deferred.promise;
-//          }
-//          req.session.tokens = tokens;
-//
-//          oauth2Client.setCredentials(tokens);
-//          var result = callback(oauth2Client, week);
-//          deferred.resolve(result);
-//
-//        });
-//        return deferred.promise;
-    
-    
+           // generate token
+           return genToken(oauth2Client, code)
+           .then(function(result){
 
+               access_token = result.access_token;
+               refresh_token = result.refresh_token;
+
+               console.log('aT2'+access_token+'rT2'+refresh_token);
+
+           })
+           // update db
+           .then(function(result){
+               db.query("UPDATE be.user SET aToken=?, rToken=? WHERE email=?;", [access_token, refresh_token, email], function(err, result){
+                   if(err)
+                       console.log(err);
+                   else
+                       console.log("update db success");
+
+               });
+           })
+           //
+           .then(function(results){
+               console.log('aT:'+access_token+'rT:'+refresh_token);
+               oauth2Client.setCredentials({ access_token: access_token, refresh_token: refresh_token });
+               return callback(oauth2Client, week);
+           });
+         
+       });
+       
+   }
+    
+    
+   //S3            
+    return genToken(oauth2Client, code)
+      .then(function(result){
+          access_token = result.access_token;
+          refresh_token = result.refresh_token;
+          console.log("Cannot find tokens in session or db, gen one: " + access_token +", "+refresh_token);
+          oauth2Client.setCredentials({ access_token: access_token, refresh_token: refresh_token });
+          req.session.tokens = result;
+          return callback(oauth2Client, week);
+      });
+    
 }
 
 function genToken(oauth2Client, code){
@@ -397,7 +373,8 @@ function searchFile(auth, week){
                     ['WK 4','WK4', '第四週', '第四週行動表', '第4週'],
                     ['WK 5','WK5', '第五週', '第五週行動表', '第5週'],
                     ['WK 6','WK6', '第六週', '第六週行動表', '第6週'],
-                    ['WK 7','WK7', '第七週', '第七週行動表', '第7週']];
+                    ['WK 7','WK7', '第七週', '第七週行動表', '第7週'],
+                    ['WK 8','WK8', '第八週', '第八週行動表', '第8週']];
     
     // Retrieve Member From File
     var mPath = __dirname+'/properties/memberList.json';

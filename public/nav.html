@@ -1,0 +1,53 @@
+<div ng-controller="NavController as ctrl">
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <a ng-href="#/" class="navbar-brand">
+                    <span>BeDoHave</span>
+                    <!--                <img src="./image/logo.jpg" style="border-radius: 50%;"></img>-->
+                </a>
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <ul class="nav navbar-nav collapse navbar-collapse">
+                <li><a ng-href="#/home">Home</a></li>
+                <li>
+                    <a id="anchor" href="#week">Week</a>
+                </li>
+                <li>
+                    <a id="anchor" href="#enroll">Enroll</a>
+                </li>
+                <!--
+                <li><a ng-href="#/find">Find</a></li>
+                <li><a ng-href="#/note">Note</a></li>
+                <li><a ng-href="#/chat">Chat</a></li>
+                <li><a ng-href="#/about">About</a></li>
+-->
+            </ul>
+            <ul class="nav navbar-nav navbar-right collapse navbar-collapse">
+                <!--
+                <li style="padding-top: 7px;">
+                    
+                </li>
+-->
+                <li>
+
+                    <div id="my-signin2"></div>
+                    <div id="sign-out">
+                        <span id="avatar" style="padding: 9px;"></span>
+                        <span id="email"></span>
+                        <button onclick="signOut()">Logout</button>
+                    </div>
+                </li>
+                <li>
+
+                </li>
+            </ul>
+
+        </div>
+    </nav>
+</div>
+<script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>

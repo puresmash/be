@@ -6,6 +6,13 @@ angular.module('SwatAngular')
     
     controller.code = $routeParams.token;
     
+    this.getYSheet = function(){
+        var ySheet = "https://docs.google.com/spreadsheets/export?id=1Zeyx3CTsnRIqbU0vjnBNe1NKECaYqQW_iOa_wh_uHuA&exportFormat=csv";
+        $http({url:ySheet,headers:{'Authorization': 'Bearer ' + token}, method:'GET'}).success(function(getData){
+            console.log(getData);
+        });
+    };
+    
     this.getDriveMeta = function(week){
         controller.title = "第" + week +"週繳交狀況";
         controller.week = week;
