@@ -13,6 +13,11 @@ angular.module('SwatAngular', ['ngRoute'])
         templateUrl: 'templates/pages/note.html',
         controller: 'NoteController',
         controllerAs: 'noteCtrl'
+    })
+    .when('/auth/', {
+        templateUrl: 'templates/pages/auth.html',
+        controller: 'AuthController',
+        controllerAs: 'authCtrl'
     });
 //    .otherwise('', {
 //        redirectTo: '/home'

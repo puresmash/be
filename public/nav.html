@@ -34,20 +34,29 @@
                 </li>
 -->
                 <li>
-
-                    <div id="my-signin2"></div>
+                    <button id="signinButton" ng-click="ctrl.signin()">Sign in with Google</button>
                     <div id="sign-out">
                         <span id="avatar" style="padding: 9px;"></span>
                         <span id="email"></span>
-                        <button onclick="signOut()">Logout</button>
+                        <button ng-click="ctrl.signOut()">Logout</button>
                     </div>
-                </li>
-                <li>
-
                 </li>
             </ul>
 
         </div>
     </nav>
+    <script src="https://apis.google.com/js/platform.js?onload=start" async defer></script>
 </div>
 <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+<script>
+    function start() {
+      gapi.load('auth2', function() {
+        auth2 = gapi.auth2.init({
+          client_id: '981468015509-6n46c29co3unjouhobqdphnki0ev5077.apps.googleusercontent.com',
+          // Scopes to request in addition to 'profile' and 'email'
+          'scope': 'profile https://www.googleapis.com/auth/drive.metadata.readonly'
+        });
+      });
+    }
+</script>

@@ -16,6 +16,7 @@
                     </button>
 
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+<!--
                         <li>
                             <a href="https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/drive.metadata.readonly&redirect_uri=http://localhost:3000/home/&response_type=code&client_id=981468015509-6n46c29co3unjouhobqdphnki0ev5077.apps.googleusercontent.com&access_type=offline&approval_prompt=force">
                                 <div id="gLogin">
@@ -25,14 +26,10 @@
                             </a>
                         </li>
                         <li role="separator" class="divider"></li>
-                        <li>
-                            <a ng-click="homeCtrl.getDriveMeta(7)">
-                                <span class="glyphicon glyphicon-check"></span> Week 7
-                            </a>
-                        </li>
-                        <li>
-                            <a ng-click="homeCtrl.getDriveMeta(8)">
-                                <span class="glyphicon glyphicon-check"></span> Week 8
+-->
+                        <li ng-repeat="week in homeCtrl.weeks">
+                            <a ng-click="homeCtrl.getDriveMeta(week)">
+                                <span class="glyphicon glyphicon-check"></span> Week {{week}}
                             </a>
                         </li>
 <!--
@@ -53,6 +50,7 @@
 
                 <div class="panel-body">
                     <h3>{{homeCtrl.title}}</h3>
+                    <span>{{homeCtrl.errorCode}} {{homeCtrl.errorMsg}}</span>
                     <!--                <ul ng-repeat="names in homeCtrl.handOver" style="list-style: none;" class="row">-->
                     <ul ng-repeat="names in homeCtrl.users" style="list-style: none;" class="row">
 
@@ -125,3 +123,18 @@
         </div>
     </div>
 </section>
+<script>
+    function getYSheet(){
+        console.log('getYSheet');
+        var ySheet = "https://docs.google.com/spreadsheets/export?id=1Zeyx3CTsnRIqbU0vjnBNe1NKECaYqQW_iOa_wh_uHuA&exportFormat=csv";
+        $.ajax({
+            url: ySheet, 
+            type: "GET",   
+            dataType: 'jsonp',
+            cache: false,
+            success: function(response){                          
+                alert(response);                   
+            }           
+        });    
+    }
+</script>

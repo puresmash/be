@@ -2,15 +2,21 @@ angular.module('SwatAngular')
 .controller('HomeController', function($http, $routeParams){
     var controller = this;
     
-    console.log("CoDe = " + $routeParams.token);
-    
-    controller.code = $routeParams.token;
+    this.weeks = [7, 8, 9, 10, 11, 12, 13, 14, 15];
     
     this.getYSheet = function(){
-        var ySheet = "https://docs.google.com/spreadsheets/export?id=1Zeyx3CTsnRIqbU0vjnBNe1NKECaYqQW_iOa_wh_uHuA&exportFormat=csv";
-        $http({url:ySheet,headers:{'Authorization': 'Bearer ' + token}, method:'GET'}).success(function(getData){
-            console.log(getData);
-        });
+//        var ySheet = "https://docs.google.com/spreadsheets/export?id=1Zeyx3CTsnRIqbU0vjnBNe1NKECaYqQW_iOa_wh_uHuA&exportFormat=csv";
+//        var googleUser = gapi.auth2.getAuthInstance().currentUser.get();
+//        var access_token = googleUser['wc']['access_token'];
+//        $http({url:ySheet,headers:{'Authorization': 'Bearer ' + access_token}, method:'GET'}).success(function(getData){
+//            console.log(getData);
+//        });
+        var xhr = new XMLHttpRequest();
+        var oauthToken = gapi.auth2.getToken();
+        xhr.open('GET',
+          'https://docs.google.com/spreadsheets/export?id=1Zeyx3CTsnRIqbU0vjnBNe1NKECaYqQW_iOa_wh_uHuA&exportFormat=csv');
+        xhr.setRequestHeader('Authorization', 'Bearer ' + oauthToken.access_token);
+        xhr.send();
     };
     
     this.getDriveMeta = function(week){
@@ -20,7 +26,7 @@ angular.module('SwatAngular')
 //        if(controller.token){
             var path = '/getDrive';//?token='+controller.token+"&week="+week;
             console.log('GET DRIVE');
-            $http({url:path, method:'POST', data:{code: controller.code, week: week, user: ''}}).success(function(getData){
+            $http({url:path, method:'POST', data:{week: week}}).success(function(getData){
                 var ary = [];
                 
                 for(var i = 0; i < getData.length; i++){
@@ -33,11 +39,9 @@ angular.module('SwatAngular')
                 controller.handOverMap = ary;
                 
             }).error(function(getData, status, c, d, e){
-                controller.error = getData;
+                controller.errorCode = getData.code;
+                controller.errorMsg = getData.errors[0].message;
                 console.log(getData);
-                console.log("status:"+status);
-                console.log(c);
-                console.log(d);
             });
 //        }
 //        else{
