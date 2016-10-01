@@ -14,7 +14,7 @@ angular.module('SwatAngular')
 })
 .controller('NavController', function (Configuration) {
     var controller = this;
-    
+
     // render login form GUI
 //    gapi.signin2.render('my-signin2', {
 //        'scope': 'profile https://www.googleapis.com/auth/drive.readonly',
@@ -62,8 +62,8 @@ angular.module('SwatAngular')
 //        signOutDiv.find('span#email').text(profile.getEmail());
 //        signOutDiv.show();
 //    }
-//    this.auth2;    
-//    
+//    this.auth2;
+//
 //    this.start = function(){
 //        gapi.load('auth2', function() {
 //            controller.auth2 = gapi.auth2.init({
@@ -73,22 +73,22 @@ angular.module('SwatAngular')
 //            });
 //          });
 //    };
-            
+
     this.signin = function(){
         var auth2 = gapi.auth2.getAuthInstance();
         auth2.grantOfflineAccess({'redirect_uri': 'postmessage'}).then(signInCallback);
     };
-            
+
     function signInCallback(authResult){
         googleUser = gapi.auth2.getAuthInstance().currentUser.get();
             
             var profile = googleUser.getBasicProfile();
             var id_token = googleUser.getAuthResponse().id_token;
             console.log(googleUser);
-            var access_token = googleUser['wc']['access_token'];
+            var access_token = googleUser['Zi']['access_token'];
             var email = profile.getEmail();
             var code = authResult['code'];
-            
+
           if (code) {
 
             // Hide the sign-in button now that the user is authorized, for example:
@@ -99,7 +99,7 @@ angular.module('SwatAngular')
             var signOutDiv = $('div#sign-out');
             signOutDiv.find('span#email').text(profile.getEmail());
             signOutDiv.show();
-            
+
             // Send the code to the server
             $.ajax('/storeToken', {
               type: 'POST',
