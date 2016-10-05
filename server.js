@@ -4,7 +4,6 @@ var app = express();
 var request = require('request');
 
 var fs = require('fs');
-var q = require('q');
 var lodash = require('lodash');
 var google = require('googleapis');
 var googleAuth = require('google-auth-library');
@@ -53,124 +52,103 @@ app.post('/storeToken', function(req, res){
     var param = req.body;
     var id_token = param.id_token;
     var code = param.code;
-    var token = req.body.id_token;
-    var url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token='+token;
+    var url = 'https://www.googleapis.com/oauth2/v3/tokeninfo?id_token=' + id_token;
+    // According id_token, validating whether the incoming user is valid and get login info.
     request(url, function(err, response, body){
         if (!err && response.statusCode == 200) {
-            
-            
-            
             var info = JSON.parse(body);
             var aud = info.aud;
             var iss = info.iss;
             var email = info.email;
+            var avatarUrl = info.picture;
             req.session.email = email;
+            req.session.avatarUrl = avatarUrl;
             console.log(info);
-            
+
+            // Could validate aud and iss here, then use the response email for login.
+            console.log("===After Login Start===");
             afterLogin(email, code, req).then(function(result){
-                console.log("===After Login===");
-                
                 res.status(200).json({email: email});
+
             });
-            
-            
             return;
         }
         res.status(401).json({'error': 'invalid token'});
     });
-    
-    
 });
 
-//app.post('/testToken', function(req, res){
-//    var param = req.body;
-//    var code = param.code;
-//    var email = param.email;
-//    
-//    var promise = afterLogin(email, code, req);
-//});
+app.post('/checkLogin', function(req, res){
+    var session = req.session;
+
+    if(session.email)
+        res.status(200).json({email: session.email, avatarUrl: session.avatarUrl});
+    else {
+        res.status(401).json({'error': 'must login first'});
+    }
+});
+
+app.post('/refreshToken', function(req, res){
+    var email = req.session.email;
+    if(!email){
+      console.log('Non-login before.');
+      return;
+    }
+
+    var oauth2Client = getCredentialsFromSession(req);
+
+    new refreshToken(req).then(()=>{
+
+        console.log('refresh token succeed');
+        res.status(200).json({success: true});
+    })
+    .catch((err)=>{
+        console.log('refresh token failed');
+        res.status(403).json({success: false, msg: err});
+    });
+});
 
 app.post('/getDrive', function(req, res){
-    
-    var param = req.body;
-    
-    var week = param.week;
-    
-    var email = req.session.email;
-    
-    var promise = authorize(week, req, searchFile);
 
-    q.all(promise).then(function(result){
-        console.log(promise);
+    var param = req.body;
+    var week = param.week;
+    var email = req.session.email;
+    // TODO handle tokens not set error (just send err msg to user)
+    var promiseAry = authorize(req, week, searchForEachTeam);
+    console.log(promiseAry);
+    // should alreay set tokens in session, otherwise throw err
+    Promise.all(promiseAry).then(function(result){
         console.log('Already Handover : '+result);
         res.status(200).json(result);
+        return;
     })
     .catch(function(err){
         console.log(err);
         if(err.code == 401){
-            var auth = new googleAuth();
-            var oauth2Client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
-            var temp = req.session.oauth2Client.credentials;
-            oauth2Client.setCredentials({ access_token: temp.access_token, refresh_token: temp.refresh_token });
-            
             console.log('manully update token with ' + email);
-//            console.log(oauth2Client);
-            oauth2Client.refreshAccessToken(function(err, tokens) {
-                var access_token = tokens.access_token;
-                var refresh_token = tokens.refresh_token;
-//                console.log("at"+access_token+"rt"+refresh_token);
-                console.log(req.session.oauth2Client.credentials.access_token);
-                console.log(access_token);
-                req.session.oauth2Client.credentials.access_token = access_token;
-                updateTokenInDB(access_token, refresh_token, email);
-            });   
+            return refreshToken(req);
         }
         res.status(403).send(err);
+    })
+    .then(()=>{
+        console('@@@@@@@@@@@@@@@');
     });
-    
+
 });
 
 app.get('/getUsers', function(req, res){
-    db.query("SELECT id, nickname, enroll, color, t_id FROM be.user WHERE t_id>0 ORDER BY t_id", function(err, result){
+    db.query("SELECT id, nickname, enroll, color, t_id FROM demo.user WHERE t_id>0 ORDER BY t_id", function(err, result){
         if(err){
             console.log(err);
             return;
         }
+        // There are 7 teams at most
         var users = [[],[],[],[],[],[],[]];
-        console.log(users);
         result.forEach(function(user){
-            
             var team = user.t_id;
-
             users[team].push(user);
-            
         });
         res.status(200).json({users: users});
-        
     });
-});
-
-app.get('/getPlaces', function(req, res){
-
-    var url = "https://graph.facebook.com/me/tagged_places";
-    url += '?access_token='+req.query.access_token;
-    
-    request(url, function(err, response, body){
-        var places = [];
-        
-        JSON.parse(body).data.forEach(function(data){
-            var place = {}
-            place.name = data.name;
-            place.time = data.created_time;
-            place.city = data.place.location.city;
-            place.street = data.place.location.street;
-            place.latitude = data.place.location.latitude;
-            place.longitude = data.place.location.longitude;
-            places.push(place);
-        });
-        res.status(200).json({'places': places});
-    });
-    
 });
 
 app.get('/getNews', function(req, res){
@@ -178,56 +156,13 @@ app.get('/getNews', function(req, res){
         .json({news: 'Hello WebService with NodeJS & mvc with AngularJS'});
 });
 
-//app.get('/getMember', function(req, res){
-//    db.query("SELECT user.id, user.nickname FROM be.user ORDER BY t_id;", [], function(err, result){
-//        if(err){
-//            console.log(err);
-//            return;
-//        }
-//        console.log(result);
-//        res.status(200).json({notes: result});  
-//    });
-//});
-
-app.get('/getNote', function(req, res){
-    var id = req.query.id || 0;
-    console.log('ID='+id);
-    db.query("SELECT * FROM be.message LEFT JOIN be.user ON message.u_id = user.id WHERE user.id = ?", [id], function(err, result){
-        if(err){
-            console.log(err);
-            return;
-        }
-        
-//        console.log(result);
-        res.status(200).json({notes: result});
-        
-    });
-//    res.status(200).json({notes: blocks});
-});
-
-app.post('/saveNote', function(req, res){
-    var newBlock = req.body;
-//    blocks.push({name: newBlock.name, description: newBlock.description});
-//    console.log(blocks);
-    db.query("INSERT INTO be.message(msg, u_id) VALUES(?, ?)", ['testjs', 0], function(err, result){
-        if(err)
-            console.log(err);
-        else
-            console.log(result);
-    });
-    
-    res.status(201).json(newBlock.name);
-});
-
 app.use(function(req, res){
-	res.status(404);
-	res.render('404');
+	res.status(404).send('Sorry cant find that!');;
 });
 
 app.use(function(err, req, res, next){
 	console.error(err.stack);
-	res.status(500);
-	res.render('500');
+	res.status(500).send('Something failed!');
 });
 
 app.listen(app.get('port'), app.get('ip'), function(){
@@ -253,91 +188,195 @@ function configAuth(){
     var setting = JSON.parse(jsonStr).web;
     CLIENT_ID = setting.client_id;
     CLIENT_SECRET = setting.client_secret;
-    REDIRECT_URL = setting.redirect_uris[0];   
+    REDIRECT_URL = setting.redirect_uris[0];
 }
 
 //authorize(''/*JSON.parse(content)*/, searchFile);
 
-function queryWithSessToken(oauth2Client, req){
-    if(req.session.tokens){
-        console.log("FIND TOKEN IN SESSION: " + req.session.tokens);
-        var access_token = req.session.tokens.access_token;
-        var refresh_token = req.session.tokens.refresh_token;
-        console.log("AT:"+access_token);
-        console.log("RT:"+refresh_token);
-        oauth2Client.setCredentials({ access_token: access_token, refresh_token: refresh_token });
-        
-        return result = callback(oauth2Client, week);
-    }
-}
-
-
+/**
+ * Using one times code to purchase access_token, refresh_token from google
+ * then store it to both db and session.
+ * If user did purchase tokens before, get them from db instead, then prepare them
+ * in session for later usage.
+ *
+ * @param {email} as a key to distinguish user identity.
+ * @param {code} one times code publishing by google.
+ * @param {req} saving tokens to session at last.
+ */
 function afterLogin(email, code, req) {
     console.log('User use google sign in');
-    if(!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URL)
-        configAuth();
-    
-    var auth = new googleAuth();
-    var oauth2Client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
+    var oauth2Client = createOAuth2Client();
 
-    console.log('REDIRECT_URL: '+REDIRECT_URL);
-    console.log('CODE: '+code);
-    console.log(oauth2Client);
     //S2
-    var access_token, refresh_token;
-
     if (email) {
         console.log('Ready To get Token Form DB');
-
         return getTokenFormDB(email)
         .then(function (result) {
-            access_token = result.aToken;
-            refresh_token = result.rToken;
-
-            oauth2Client.setCredentials({
-                access_token: access_token,
-                refresh_token: refresh_token
-            });
-
-            req.session.oauth2Client = oauth2Client;
-            
-            return oauth2Client;
+            var access_token = result.aToken;
+            var refresh_token = result.rToken;
+            return setCredentialsToSession(access_token, refresh_token, req);
         })
         .catch(function (err) {
             console.log('Cannot got token from db, get a new one instead');
+            console.log('===== getTokenFormDB end =====');
             // generate token
-            genToken(oauth2Client, code)
+            return genToken(oauth2Client, code)
                 .then(function (result) {
-                    access_token = result.access_token;
-                    refresh_token = result.refresh_token;
-                
-                    oauth2Client.setCredentials({
-                        access_token: access_token,
-                        refresh_token: refresh_token
-                    });
-                })
-                // update db
-                .then(function (result) {
-                    updateTokenInDB(access_token, refresh_token, email);
-                })
-                .then(function(result){
-                    console.log("Store oauth2Client To Session: "+oauth2Client);
-                    req.session.oauth2Client = oauth2Client;
-                    return oauth2Client;
+                    var access_token = result.access_token;
+                    var refresh_token = result.refresh_token;
+                    return setCredentialsToSession(access_token, refresh_token, req);
+                }).then(function (credentials) {
+                    console.log('updateTokenToDB');
+                    updateTokenToDB(credentials.access_token, credentials.refresh_token, email);
                 });
+        })
+        .catch(function(err){
+            console.log('REDIRECT_URL: '+ REDIRECT_URL);
+            console.log('CODE: '+ code);
+            console.log('login failed(' + email + ')');
+        })
+        .then(function(){
+            console.log("===After Login End===");
         });
-
     }
 }
 
-function updateTokenInDB(access_token, refresh_token, email){
-    db.query("UPDATE be.user SET aToken=?, rToken=? WHERE email=?;", [access_token, refresh_token, email], function (err, result) {
+function createOAuth2Client(){
+    if(!CLIENT_ID || !CLIENT_SECRET || !REDIRECT_URL)
+        configAuth();
+    var auth = new googleAuth();
+    var oauth2Client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
+    return oauth2Client;
+}
+
+function setCredentialsToSession(access_token, refresh_token, req){
+    console.log('setCredentialsToSession: ');
+    console.log('access_token: ', access_token);
+    console.log('refresh_token: ', refresh_token);
+    req.session.access_token = access_token;
+    req.session.refresh_token = refresh_token;
+    return {access_token, refresh_token};
+}
+
+function getCredentialsFromSession(req){
+    if(!req.session.access_token || !req.session.refresh_token){
+        console.log(req.session.access_token);
+        console.log(req.session.refresh_token);
+        throw new Error("There aren't any token prepared in session, pls login first");
+    }
+
+    var oauth2Client = createOAuth2Client();
+    oauth2Client.setCredentials({
+          access_token: req.session.access_token,
+          refresh_token: req.session.refresh_token
+    });
+    console.log('Setting credentials to oauth2Client with: ');
+    console.log(oauth2Client.credentials);
+    return oauth2Client;
+}
+
+function refreshToken(req){
+    var email = req.session.email;
+    var oauth2Client = getCredentialsFromSession(req);
+
+    return new Promise((resolve, reject)=>{
+
+        oauth2Client.refreshAccessToken(function(err, tokens) {
+            if(err || !tokens){
+                reject(err);
+                return;
+            }
+
+            var access_token = tokens.access_token;
+            var refresh_token = tokens.refresh_token;
+            console.log(`at: ${access_token}, rt: ${refresh_token}`);
+            setCredentialsToSession(access_token, refresh_token, req);
+            updateTokenToDB(access_token, refresh_token, email);
+
+            resolve(tokens);
+        });
+    });
+}
+
+function getTokenFormDB(email){
+    console.log('===== getTokenFormDB start =====');
+    return new Promise((resolve, reject)=>{
+        db.query("SELECT aToken, rToken FROM demo.user WHERE email=?", [email], function(err, result){
+            if(err){
+                console.log(err);
+                reject(err);
+                console.log('===== getTokenFormDB end =====');
+                return;
+            }
+
+            var aToken = result[0].aToken;
+            var rToken = result[0].rToken;
+            console.log(`aToken = ${aToken}, rToken = ${rToken}`);
+
+            if(!aToken || !rToken){
+                var msg = 'Cannot find token in DB for this user';
+                console.log(msg);
+                reject(msg);
+                console.log('===== getTokenFormDB end =====');
+                return;
+            }
+            resolve({aToken: aToken, rToken: rToken});
+            console.log('===== getTokenFormDB end =====');
+        });
+    });
+}
+
+function genToken(oauth2Client, code){
+    console.log('===== Gen token start =====');
+    var url = oauth2Client.generateAuthUrl({
+        //access_type: 'offline',
+        scope: SCOPES
+        //approval_prompt: "force"
+    });
+
+    console.log('calling url: ', url);
+
+    return new Promise(function(resolve, reject) {
+        oauth2Client.getToken(code, function(err, tokens) {
+          if (err) {
+            console.log('Error while trying to retrieve access token', err);
+            console.log(oauth2Client);
+            reject(err)
+          }
+          else{
+            console.log(tokens);
+            console.log('Gen token success');
+            resolve(tokens);
+          }
+          console.log('===== Gen token end =====');
+        });
+    })
+}
+
+/**
+ * Save current token to db async
+ * (when there is no need to assure execute order)
+ * @param {string} access_token access_token
+ * @param {string} refresh_token refresh_token
+ * @param {string} email email will be used as a key in DB
+ */
+function updateTokenToDB(access_token, refresh_token, email){
+    console.log('===== Upd token start =====');
+    var qs = "UPDATE demo.user SET aToken=?, rToken=? WHERE email=?;";
+    var qAry = [access_token, refresh_token, email];
+    if(!refresh_token){
+        qs = "UPDATE demo.user SET aToken=? WHERE email=?;";
+        qAry = [access_token, email];
+    }
+    db.query(qs, qAry, function (err, result) {
         if (err)
             console.log(err);
         else
             console.log("update db success");
     });
+    console.log('===== Upd token end =====');
 }
+
 /**
  * Create an OAuth2 client with the given credentials, and then execute the
  * given callback function.
@@ -345,153 +384,85 @@ function updateTokenInDB(access_token, refresh_token, email){
  * @param {Object} credentials The authorization client credentials.
  * @param {function} callback The callback to call with the authorized client.
  */
-function authorize(week, req, callback) {
-    
-    var credentials = req.session.oauth2Client.credentials;
-    
-    var auth = new googleAuth();
-    var oauth2Client = new auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
-    oauth2Client.setCredentials({ access_token: credentials.access_token, refresh_token: credentials.refresh_token });
-    
+function authorize(req, week, callback) {
+    //retrieve credentials from session
+    var oauth2Client = getCredentialsFromSession(req);
+
     if(oauth2Client){
         return callback(oauth2Client, week);
     }
-    
 }
 
-function genToken(oauth2Client, code){
-    console.log('Prepare to gen token');
-    oauth2Client.generateAuthUrl({
-        access_type: 'offline',
-        scope: SCOPES
-    });
-    
-    var deferred = q.defer();
-    
-    oauth2Client.getToken(code, function(err, tokens) {
-      if (err) {
-        console.log('Error while trying to retrieve access token', err);
-        console.log(oauth2Client);
-        deferred.reject(err);
-        return;
-      }
-        
-      console.log(tokens);
-      deferred.resolve(tokens);
-      console.log('Gen token success');
-    });
-    
-    return deferred.promise;
-}
+function searchForEachTeam(auth, week){
+    var template = [['week1','WK1', '第一週', '第1週'],
+                    ['week2','WK2', '第二週', '第2週']];
 
-
-function getTokenFormDB(email){
-    
-    var deferred = q.defer();
-    db.query("SELECT aToken, rToken FROM be.user WHERE email=?", [email], function(err, result){
-        if(err){
-            console.log(err);
-            deferred.reject(err);
-            return;
-        }
-            
-        var aToken = result[0].aToken;
-        var rToken = result[0].rToken;
-        
-        if(!aToken || !rToken){
-            var msg = 'There are not any token record in db with this user';
-            console.log(msg);
-            deferred.reject(msg);
-            return;
-        }
-        
-        console.log('aToken = ' + aToken);
-        console.log('rToken = ' + rToken);
-        
-//        if(aToken && rToken)
-            deferred.resolve({aToken: aToken, rToken: rToken});
-//        else
-//            deferred.reject("Cannot find token in DB");
-    });
-    return deferred.promise;
-}
-
-function searchFile(auth, week){
-    var template = [['WK 1','WK1', '第一週', '第一週行動表', '第1週'],
-                    ['WK 2','WK2', '第二週', '第二週行動表', '第2週'],
-                    ['WK 3','WK3', '第三週', '第三週行動表', '第3週'],
-                    ['WK 4','WK4', '第四週', '第四週行動表', '第4週'],
-                    ['WK 5','WK5', '第五週', '第五週行動表', '第5週'],
-                    ['WK 6','WK6', '第六週', '第六週行動表', '第6週'],
-                    ['WK 7','WK7', '第七週', '第七週行動表', '第7週'],
-                    ['WK 8','WK8', '第八週', '第八週行動表', '第8週'],
-                    ['WK 9','WK9', '第九週', '第九週行動表', '第9週']];
-    
     // Retrieve Member From File
     var mPath = __dirname+'/properties/memberList.json';
     var jsonStr = fs.readFileSync(mPath);
     var member = JSON.parse(jsonStr);
-    
+
     // Check For Each Team
     var result = [];
-    for(var key in member){ 
+    for(var key in member){
         var team = member[key];
-        result.push(searchName(auth, template[week-1], team.folder, team.mAry));
+        console.log(team);
+        console.log(auth);
+        console.log(template);
+        result.push(searchNames(auth, template[week-1], team.folder, team.mAry));
     }
+    console.log('result');
+    console.log(result);
     return result;
-    
-    
 }
 
-function searchName(auth, template, folderId, users){
-    
-    return listFiles(auth, folderId).then(function(response){
-        var teamFiles = response[0].items;
-
-        var folderId;
-        teamFiles.forEach(function(file){
-            if(file.title === template[0] || file.title === template[1] || file.title === template[2] 
-               || file.title === template[3] || file.title === template[4]){
-                folderId = file.id;
+function searchNames(auth, template, folderId, users){
+    return listFiles(auth, folderId)
+        .then(function(res){
+            if(res[0])
+                res = res[0];
+            var teamFiles = res.items;
+            var file = teamFiles.find(function(file){
+                return (file.title === template[0] || file.title === template[1] ||
+                    file.title === template[2] || file.title === template[3] );
+            });
+            if(!file || !file.id){
+                throw new Error('Cannot find corresponding folder at google driver');
             }
-//                else
-//                    return;
-        });
-        
-        if(!folderId){
-            return;
-        }
-        var promise = listFiles(auth, folderId);
-        return promise.then(function(response){
-            var teamFiles = response[0].items;
-            //console.log("Users = " + users);
-            
-            //new
+            return file.id;
+        })
+        .then(function(folderId){
+            return listFiles(auth, folderId);
+        })
+        .then(function(res){
+            if(res[0])
+                res = res[0];
+            var teamFiles = res.items;
             var handOver = {};
             users.forEach(function(user){
                 var name = user.nickname;
                 var id = user.id;
                 for (var j = 0; j < teamFiles.length; j++) {
                     var file = teamFiles[j];
-                    
+
                     var bool = lodash.includes(file.title.toLowerCase(), name.toLowerCase());
-                    
                     if(bool){
                         console.log('%s (%s)', file.title.toLowerCase(), name.toLowerCase());
                         handOver[id] = true;
                         return;
-//                        return {'name': name, 'id': id, 'handOver': true};
                     }
                 }
                 handOver[id] = false;
-//                return {'name': name, 'id': id, 'handOver': false};
             });
             return handOver;
-
+        })
+        .catch(function(err){
+            console.log('Fail retrieve files cause by ');
+            console.log(err);
+            console.log(err.stack);
+            throw err;
         });
-    });
-    
-    
+
 }
 
 /**
@@ -501,7 +472,31 @@ function searchName(auth, template, folderId, users){
  */
 function listFiles(auth, query) {
   var service = google.drive('v2');
-    
-  query = "'" + query + "'" + " in parents";
-  return q.nfcall(service.files.list, {auth: auth, maxResults:10, q: query});
+  query = `'${query}' in parents and trashed = false`;
+  console.log('Execute query: ' + query);
+
+  return new Promise((resolve, reject)=>{
+          service.files.list({
+              auth: auth,
+              maxResults:10,
+              q: query
+          }, function(err, response){
+              if(err){
+                  console.log('Calling google service failed');
+                  console.log(err);
+                  reject(err);
+              }
+              resolve(response);
+          })
+  });
+
 }
+
+// old version using q
+// function listFiles(auth, query) {
+//   var service = google.drive('v2');
+//
+//   query = `'${query}' in parents and trashed = false`;
+//   console.log('Execute query: ' + query);
+//   return q.nfcall(service.files.list, {auth: auth, maxResults:10, q: query});
+// }

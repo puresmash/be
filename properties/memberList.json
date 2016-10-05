@@ -1,69 +1,19 @@
-{   
+{
     "1": {
-        "mAry": [ 
-                 { "id": 12, "nickname": "Tammy" },
-                 { "id": 38, "nickname": "Ken" },
-                 { "id": 28, "nickname": "Chris" },
-                 { "id": 29, "nickname": "Rocky" },
-                 { "id": 39, "nickname": "Yen" },
-                 { "id": 25, "nickname": "Damon" },
-                 { "id": 27, "nickname": "Fiyon" },
-                 { "id": 16, "nickname": "Athena" }],
-        "leader": "gigi",
-        "folder": "0B0dBUv3RbA81fjN6cmE3Ull3R0FLeFRvT05wU3gtMk1Bd1BJd01aanpLV3Uyb1haWkFTUVk"
+        "mAry": [
+                 { "id": 2, "nickname": "Tammy" },
+                 { "id": 1, "nickname": "Rocky" },
+                 { "id": 3, "nickname": "Fiyon" }],
+        "leader": "Alpha",
+        "folder": "0B7BxajjCROWELWNHalNZcmRobW8"
     },
-    
-    "2": {
-        "mAry": [ 
-                 { "id": 31, "nickname": "紅Rachel" },
-                 { "id": 17, "nickname": "Steven" },
-                 { "id": 1, "nickname": "Mini" }, 
-                 { "id": 15, "nickname": "Zoe" },
-                 { "id": 14, "nickname": "Becason" },
-                 { "id": 4, "nickname": "麗娟" },
-                 { "id": 3, "nickname": "Thomas" }],
-        "leader": "maureen",
-        "folder": "0B0dBUv3RbA81flI0ZjhEZEh5NmhFeGttbXEtS2pZMWlhaktqS3dfSVZ5WDZwOHdTdVdJV2s"
-    },    
-    "4": {
-        "mAry": [ 
-                  { "id": 40, "nickname": "Ben" },
-                  { "id": 21, "nickname": "Michelle" },
-                  { "id": 33, "nickname": "Stanley" },
-                  { "id": 37, "nickname": "Kana" },
-                  { "id": 2, "nickname": "Sunny" },
-                  { "id": 9, "nickname": "Queenie" },
-                  { "id": 30, "nickname": "Charles" }],
-        "leader": "kris",
-        "folder": "0B0dBUv3RbA81flVrRGRBVHJYNjNoazJrckdSZHFVak5sM2V3LXhnN0QtZHBkOWc1eUxtaTg"
-        
-    },
-    
-    "5": 
+    "2":
     {
-        "mAry": [ 
-                  { "id": 19, "nickname": "Swat" },
-                  { "id": 35, "nickname": "小Rachel" },
-                  { "id": 5, "nickname": "Mills" },
-                  { "id": 26, "nickname": "May" },
-                  { "id": 20, "nickname": "佩佩" },
-                  { "id": 32, "nickname": "Charles" },
-                  { "id": 13, "nickname": "Wisely" }],
-        "leader": "tracy",
-        "folder": "0B0dBUv3RbA81fmJISkZfaGJZTnlmMmp2ZldubG80V1hwNmR5cVFKRVBMZTVnS3VEczJkTTg"
-    },
-    
-    "6": {
-        "mAry": [ 
-                  { "id": 7, "nickname": "Neil" },
-                  { "id": 36, "nickname": "Simon" },
+        "mAry": [
+                  { "id": 5, "nickname": "Swat" },
                   { "id": 6, "nickname": "Tina" },
-                  { "id": 18, "nickname": "Alan" },
-                  { "id": 8, "nickname": "Nicki" },
-                  { "id": 11, "nickname": "Anita" },
-                  { "id": 10, "nickname": "Sunny" }],
-        "leader": "alice",
-        "folder": "0B0dBUv3RbA81fmRsX3Z4ZG1kQVhRUGhKUjUtTXRsVDVHaDU5dnlUY2cxSExNTjMtOU4tX0E"
+                  { "id": 4, "nickname": "Charles" }],
+        "leader": "Beta",
+        "folder": "0B7BxajjCROWEcFhkSEEyLXFBaWM"
     }
 }
-

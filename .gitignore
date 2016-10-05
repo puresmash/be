@@ -1,10 +1,22 @@
+# NodeJs
 node_modules
-*~
+npm-debug.log
+
+# MAC
 .DS_Store
-credentials
+~*
+
+# Project Specific
 backup
+credentials
 credentials.js
 
 # Sass
 .sass-cache/
 *.css.map
+
+# OpenShift
+.openshift
+
+# Bower
+bower_components

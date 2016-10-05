@@ -1,13 +1,24 @@
 //Global Layout
+body{
+    @font-face {
+        font-family: "Roboto";
+        src: url('./Roboto-Regular.ttf');
+    }
+    font-family: 'Roboto', sans-serif;
+}
+
 section{
     &.s1{
-        height: 100vh;
+        min-height: 100vh;
         width: 100%;
+
+        background: url(../image/BeDoHave.jpg) no-repeat;
+        background-position: center center;
+        background-size: cover;
+
         position: relative;
-        margin:0 auto;
     }
     &.s2{
-        background-color: rgb(135, 144, 53);
     }
 }
 
@@ -20,26 +31,15 @@ div{
         padding-bottom: 50px;
     }
     &.background{
-        background: url(../image/BeDoHave.jpg) no-repeat;
-        background-position: center center;
-        background-size: cover;
-        min-height: 100%;
-        width: 100%;
-        top: 0;
-        left: 0;
-        z-index: -1;
     }
     &.background-mask{
         background: linear-gradient(rgba(133, 126, 116, 0.8), rgba(133, 126, 116, 0.8));
-        padding: 10rem 0 6rem 0;
-        min-height: 100%;
+
+        box-sizing: border-box;
+        padding-top: 10rem;
+
+        min-height: 100vh;
         width: 100%;
-        top: 0;
-        left: 0;
-//        position: absolute;
-//        display: flex;
-//        flex-direction: column;
-//        justify-content: center;
     }
 }
 
@@ -52,7 +52,7 @@ li{
     &.missing{
          background-color: plum;
     }
-    
+
     &#member{
         float: left;
         border: 1px solid #FFF;
@@ -83,7 +83,7 @@ span{
 img.avatar{
     border-radius: 50%;
     height: 32px;
-    width: 32px;   
+    width: 32px;
 }
 
 div{
@@ -91,10 +91,10 @@ div{
         display: inline-block;
         background-color: orange;
         padding: 2px 3px 2px 3px;
-        border-radius: 25%;   
+        border-radius: 25%;
     }
     &#my-signin2{
-        padding: 9px;   
+        padding: 9px;
     }
     &#sign-out{
         display:none;

@@ -14,132 +14,104 @@ angular.module('SwatAngular')
 })
 .controller('NavController', function (Configuration) {
     var controller = this;
-    
-    // render login form GUI
-//    gapi.signin2.render('my-signin2', {
-//        'scope': 'profile https://www.googleapis.com/auth/drive.readonly',
-//        'width': 120,
-//        'height': 36,
-//        'longtitle': false,
-//        'theme': 'dark',
-//        'onsuccess': onSuccess,
-//        'onfailure': onFailure
-//    });
 
+    this.isSignIn = false;
 
-//    function onSuccess(googleUser) {
-//        var profile = googleUser.getBasicProfile();
-//        var id_token = googleUser.getAuthResponse().id_token;
-//        var access_token = googleUser['Ka']['access_token'];
-//
-//        $.ajax('/storeToken', {
-//            type: 'POST',
-//            data: {
-//                id_token: id_token
-//            },
-//            success: function () {
-//                console.log(profile.getName() + ', log in success!');
-//            }
-//        });
+    // Check if user idle for a while and press F5
+    this.checkLogin = function(){
 
-//        Configuration
-//          .set('access_token', access_token)
-//          .set('id_token', id_token);
+        $.ajax('checkLogin', {
+            type: 'POST',
+            data:{}
+        })
+        .done(function(result){
+            console.log('is login: ');
+            console.log(result);
+            if(result && result.email && result.avatarUrl){
+                updAvatar({email: result.email, avatarUrl: result.avatarUrl});
+            }
+        })
+        .fail(function(jqXHR){
+            var status = jqXHR.status;
+            var msg = jqXHR.responseJSON;
+            if(status == '401' && controller.isSignIn){
+                controller.signOut();
+            }
+        });
+    };
+    this.checkLogin();
 
-//        console.log('ID: ' + profile.getId());
-//        console.log('Name: ' + profile.getName());
-//        console.log('Image URL: ' + profile.getImageUrl());
-//        console.log('Email: ' + profile.getEmail());
-//
-//        //
-//        $('#my-signin2').hide();
-//
-//        // Add avatar image
-//        $('<img class="avatar" src="' + profile.getImageUrl() + '"></img>').appendTo('span#avatar');
-//
-//        // Display user info
-//        var signOutDiv = $('div#sign-out');
-//        signOutDiv.find('span#email').text(profile.getEmail());
-//        signOutDiv.show();
-//    }
-//    this.auth2;    
-//    
-//    this.start = function(){
-//        gapi.load('auth2', function() {
-//            controller.auth2 = gapi.auth2.init({
-//              client_id: '981468015509-6n46c29co3unjouhobqdphnki0ev5077.apps.googleusercontent.com',
-//              // Scopes to request in addition to 'profile' and 'email'
-//              'scope': 'profile https://www.googleapis.com/auth/drive.readonly'
-//            });
-//          });
-//    };
-            
+    this.refreshToken = function(){
+        $.ajax('refreshToken', {
+            type: 'POST',
+            success: function(result){
+                console.log('refreshToken result');
+                console.log(result);
+                resolve('refreshToken result');
+            },
+            error: function(jqXHR, status, err){
+                console.log(err);
+            },
+            data: {}
+        });
+    };
+
     this.signin = function(){
         var auth2 = gapi.auth2.getAuthInstance();
         auth2.grantOfflineAccess({'redirect_uri': 'postmessage'}).then(signInCallback);
     };
-            
-    function signInCallback(authResult){
-        googleUser = gapi.auth2.getAuthInstance().currentUser.get();
-            
-            var profile = googleUser.getBasicProfile();
-            var id_token = googleUser.getAuthResponse().id_token;
-            console.log(googleUser);
-            var access_token = googleUser['wc']['access_token'];
-            var email = profile.getEmail();
-            var code = authResult['code'];
-            
-          if (code) {
 
-            // Hide the sign-in button now that the user is authorized, for example:
-            $('#signinButton').hide();
-            // Add avatar image
-            $('<img class="avatar" src="' + profile.getImageUrl() + '"></img>').appendTo('span#avatar');
-            // Display user info
-            var signOutDiv = $('div#sign-out');
-            signOutDiv.find('span#email').text(profile.getEmail());
-            signOutDiv.show();
-            
+    function signInCallback(authResult){
+        var googleUser = gapi.auth2.getAuthInstance().currentUser.get();
+        console.log(googleUser);
+        var profile = googleUser.getBasicProfile();
+        var id_token = googleUser.getAuthResponse().id_token;
+
+        var code = authResult['code'];
+        if (code) {
+            updAvatar({email: profile.getEmail(), avatarUrl: profile.getImageUrl()});
+
             // Send the code to the server
             $.ajax('/storeToken', {
-              type: 'POST',
+                type: 'POST',
 
-              success: function(result) {
-                console.log(result + ', log in success!');
-              },
-//              processData: false,
-              data: {'id_token': id_token, 'code': code}
+                success: function(result) {
+                  console.log(result + ', log in success!');
+                },
+                // processData: false,
+                data: {'id_token': id_token, 'code': code}
             });
-          } else {
-            // There was an error.
-          }
+        } else {
+          // There was an error.
+        }
+    }
+
+    function updAvatar(userProfile){
+        // Hide the sign-in button now that the user is authorized, for example:
+        $('#signinButton').hide();
+        // Add avatar image
+        $('<img class="avatar" src="' + userProfile.avatarUrl + '"></img>').appendTo('span#avatar');
+
+        // Display user info
+        var signOutDiv = $('div#sign-out');
+        signOutDiv.find('span#email').text(userProfile.email);
+        signOutDiv.show();
+        controller.isSignIn = true;
     }
 
     this.signOut= function() {
         var auth2 = gapi.auth2.getAuthInstance();
         auth2.signOut().then(function () {
             console.log('User signed out.');
-            $('#signinButton').show();
-
             $('div#sign-out').hide();
             $('span#avatar img').remove();
+
+            $('#signinButton').show();
+            controller.isSignIn = false;
         });
     };
 
-//    function onFailure(error) {
-//        console.log(error);
-//    };
-
-//    function renderButton() {
-//        gapi.signin2.render('my-signin2', {
-//            'scope': 'profile https://www.googleapis.com/auth/drive.readonly',
-//            'width': 120,
-//            'height': 36,
-//            'longtitle': false,
-//            'theme': 'dark',
-//            'onsuccess': onSuccess,
-//            'onfailure': onFailure,
-//        });
-//    }
-
+    this.collapse = function($event){
+        $('.collapse').collapse('toggle');
+    }
 });

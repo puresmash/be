@@ -1,10 +1,16 @@
+body {
+  font-family: 'Roboto', sans-serif; }
+@font-face {
+  body {
+    font-family: "Roboto";
+    src: url("./Roboto-Regular.ttf"); } }
 section.s1 {
-  height: 100vh;
+  min-height: 100vh;
   width: 100%;
-  position: relative;
-  margin: 0 auto; }
-section.s2 {
-  background-color: #879035; }
+  background: url(../image/BeDoHave.jpg) no-repeat;
+  background-position: center center;
+  background-size: cover;
+  position: relative; }
 
 div.container-box {
   max-width: 750px;
@@ -12,22 +18,12 @@ div.container-box {
   margin-right: auto;
   padding-top: 50px;
   padding-bottom: 50px; }
-div.background {
-  background: url(../image/BeDoHave.jpg) no-repeat;
-  background-position: center center;
-  background-size: cover;
-  min-height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0;
-  z-index: -1; }
 div.background-mask {
   background: linear-gradient(rgba(133, 126, 116, 0.8), rgba(133, 126, 116, 0.8));
-  padding: 10rem 0 6rem 0;
-  min-height: 100%;
-  width: 100%;
-  top: 0;
-  left: 0; }
+  box-sizing: border-box;
+  padding-top: 10rem;
+  min-height: 100vh;
+  width: 100%; }
 
 li.handOver {
   background-color: aquamarine; }
@@ -56,6 +52,7 @@ img.avatar {
   width: 32px; }
 
 div#gLogin {
+  display: inline-block;
   background-color: orange;
   padding: 2px 3px 2px 3px;
   border-radius: 25%; }

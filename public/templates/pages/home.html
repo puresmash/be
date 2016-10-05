@@ -1,57 +1,32 @@
-<!--
-<div id="sideBar">
-    <div></div>
-</div>
--->
+
 <section id="week" class="s1">
-    <div class="background">
+    <div class="">
         <div id="week" class="background-mask">
 
-            <div class="gTab">
-
+           <!--week list-->
+           <div class="gTab">
                 <div class="dropdown">
-                    <button type="button" class="btn btn-primary dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <button type="button" ng-click="homeCtrl.dropdown($event)" data-toggle="dropdown" class="btn btn-primary" id="dropdownMenu1" aria-haspopup="true" aria-expanded="false">
                         Week
                         <span class="caret"></span>
                     </button>
 
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-<!--
-                        <li>
-                            <a href="https://accounts.google.com/o/oauth2/auth?scope=https://www.googleapis.com/auth/drive.metadata.readonly&redirect_uri=http://localhost:3000/home/&response_type=code&client_id=981468015509-6n46c29co3unjouhobqdphnki0ev5077.apps.googleusercontent.com&access_type=offline&approval_prompt=force">
-                                <div id="gLogin">
-                                    <i class="fa fa-google" style="color: rgba(255, 255, 255, 1);"></i>
-                                </div>
-                                Google
-                            </a>
-                        </li>
-                        <li role="separator" class="divider"></li>
--->
                         <li ng-repeat="week in homeCtrl.weeks">
                             <a ng-click="homeCtrl.getDriveMeta(week)">
                                 <span class="glyphicon glyphicon-check"></span> Week {{week}}
                             </a>
                         </li>
-<!--
-                        <li role="separator" class="divider"></li>
-                        <li>
-                            <a ng-click="homeCtrl.getYSheet()">
-                                <span class="glyphicon glyphicon-check"></span> Y 表格
-                            </a>
-                        </li>
--->
                     </ul>
-
                 </div>
-
             </div>
 
-            <div class="panel panel-info" style="min-height: 470px; background-color: rgba(100%,100%,100%, 0.5);">
-
+            <!-- handOver Status-->
+            <div class="panel panel-info" style="min-height: 470px; background-color: rgba(100%,100%,100%, 0.5); margin-bottom: 0;">
                 <div class="panel-body">
                     <h3>{{homeCtrl.title}}</h3>
                     <span>{{homeCtrl.errorCode}} {{homeCtrl.errorMsg}}</span>
-                    <!--                <ul ng-repeat="names in homeCtrl.handOver" style="list-style: none;" class="row">-->
+
                     <ul ng-repeat="names in homeCtrl.users" style="list-style: none;" class="row">
 
                         <li id="member" ng-repeat="name in names" class="col-md-1" ng-class="{'handOver': homeCtrl.handOverMap[name.id], 'missing': !homeCtrl.handOverMap[name.id]}">
@@ -60,8 +35,8 @@
                         </li>
                     </ul>
                 </div>
-
             </div>
+
         </div>
     </div>
 
@@ -70,71 +45,7 @@
 
 
 <!--Second-->
-<section id="enroll" class="s2">
+<!--<section id="" class="s2">
     <div class="container-box">
-        <!--Add a New Note-->
-        <!--
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">New note</h3>
-            </div>
-            <div class="panel-body">
-                <span ng-show="noteForm.noteName.$dirty &&    
-                                (noteForm.noteName.$error.required
-                                 || noteForm.noteName.$error.minlength)">
-            This is a required field & minLength is 2
-        </span>
-                <form class="form-horizontal" ng-submit="homeCtrl.saveNote(note)" name="noteForm">
-                    <div class="row">
-                        <div class="form-group col-md-offset-2 col-md-10">
-                            <input type="text" ng-model="note.name" name="noteName" class="notename" ng-minlength="2" required placeholder="Insert your name here" />
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-md-offset-2 col-md-10">
-                            <textarea ng-model="note.description" required placeholder="Insert note content">
-                            </textarea>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="form-group col-md-offset-2 col-md-10">
-                            <button class="btn btn-default" type="submit" ng-disabled=noteForm.$invalid>
-                                Submit
-                            </button>
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
--->
-
-        <!--Show All Notes-->
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <h3 class="panel-title">心得</h3>
-            </div>
-            <div class="panel-body">
-                <div ng-repeat="note in homeCtrl.notes">
-                    <h3>{{note.title}}</h3>
-                    <span>{{note.email}}</span>
-                    <span>{{note.msg}}</span>
-                </div>
-            </div>
-        </div>
     </div>
-</section>
-<script>
-    function getYSheet(){
-        console.log('getYSheet');
-        var ySheet = "https://docs.google.com/spreadsheets/export?id=1Zeyx3CTsnRIqbU0vjnBNe1NKECaYqQW_iOa_wh_uHuA&exportFormat=csv";
-        $.ajax({
-            url: ySheet, 
-            type: "GET",   
-            dataType: 'jsonp',
-            cache: false,
-            success: function(response){                          
-                alert(response);                   
-            }           
-        });    
-    }
-</script>
+</section>-->
