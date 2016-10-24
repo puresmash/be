@@ -14,7 +14,6 @@ angular.module('SwatAngular')
 })
 .controller('NavController', function (Configuration) {
     var controller = this;
-
     this.isSignIn = false;
 
     // Check if user idle for a while and press F5
