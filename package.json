@@ -5,7 +5,7 @@
   "author": "Swat",
   "scripts": {
     "test": "grunt test",
-    "sass": "cd public/css && sass --watch style.scss:style.css"
+    "sass": "sass --watch ./scss/style.scss:./public/css/style.css"
   },
   "dependencies": {
     "body-parser": "^1.13.3",

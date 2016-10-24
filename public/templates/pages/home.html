@@ -31,7 +31,6 @@
 
                         <li id="member" ng-repeat="name in names" class="col-md-1" ng-class="{'handOver': homeCtrl.handOverMap[name.id], 'missing': !homeCtrl.handOverMap[name.id]}">
                             <a ng-click="homeCtrl.getNote(name.id)">{{name.nickname}}</a>
-                            <span class="glyphicon glyphicon-heart" ng-class="{'eg-green': name.color==='Green', 'eg-red': name.color==='Red', 'eg-blue': name.color==='Blue', 'eg-yellow': name.color==='Yellow'}">{{name.enroll}}</span>
                         </li>
                     </ul>
                 </div>

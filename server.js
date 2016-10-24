@@ -136,7 +136,7 @@ app.post('/getDrive', function(req, res){
 });
 
 app.get('/getUsers', function(req, res){
-    db.query("SELECT id, nickname, enroll, color, t_id FROM demo.user WHERE t_id>0 ORDER BY t_id", function(err, result){
+    db.query("SELECT id, nickname, t_id FROM demo.user WHERE t_id>0 ORDER BY t_id", function(err, result){
         if(err){
             console.log(err);
             return;
