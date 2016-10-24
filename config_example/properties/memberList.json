@@ -1,0 +1,19 @@
+{
+    "1": {
+        "mAry": [
+                 { "id": 2, "nickname": "Tammy" },
+                 { "id": 1, "nickname": "Rocky" },
+                 { "id": 3, "nickname": "Fiyon" }],
+        "leader": "Alpha",
+        "folder": "Copy From Google Drive URL, it will show you each folderId, then paste then here"
+    },
+    "2":
+    {
+        "mAry": [
+                  { "id": 5, "nickname": "Swat" },
+                  { "id": 6, "nickname": "Tina" },
+                  { "id": 4, "nickname": "Charles" }],
+        "leader": "Beta",
+        "folder": "Copy From Google Drive URL, it will show you each folderId, then paste then here"
+    }
+}

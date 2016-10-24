@@ -38,31 +38,30 @@ vi credentials.js
 
 At last, if you want to run it on production mode, remember to set the env variable `NPM_CONFIG_PRODUCTION=false`
 
+**Google API Manager**
+
+We use Google Sign-In to offer a robust OAuth 2.0 service. Before you could really run your own, you should follow these [steps](https://developers.google.com/identity/sign-in/web/devconsole-project) to create a new project yourself.
+
 ## Usage
+
+**Config files**
+
+All complete examples in this section can also be founded under config_example folder too.
 
 * The file `properties/memberList.json` is used to store team structure and the following is its example:
 
 ```json
-{
-    "1": {
-        "mAry": [
-                 { "id": 2, "nickname": "Tammy" },
-                 { "id": 1, "nickname": "Rocky" },
-                 { "id": 3, "nickname": "Fiyon" }],
-        "leader": "Alpha",
-        "folder": "put team's google drive folderId here"
-    },
-    "2":
-    {
-        "mAry": [
-                  { "id": 5, "nickname": "Swat" },
-                  { "id": 6, "nickname": "Tina" },
-                  { "id": 4, "nickname": "Charles" }],
-        "leader": "Beta",
-        "folder": "put team's google drive folderId here"
-    }
+"1": {
+    "mAry": [
+             { "id": 1, "nickname": "Rocky" },
+             { "id": 2, "nickname": "Tammy" },
+             { "id": 3, "nickname": "Fiyon" }],
+    "leader": "Alpha",
+    "folder": "put team's google drive folderId here"
 }
 ```
+
+First browse the correct folder using a browser, then you can find the corresponding folderId on the url column, paste them here.
 
 * The file credentials.js in root folder containing the connection string of MySQL database and is described as below:
 
@@ -83,7 +82,11 @@ module.exports = {
 
 Instead configure it manually, you should download it on your [google api console](https://console.developers.google.com/apis/credentials).
 
-* Before you can actually run this server, you should execute the following sql statement to generate new MySQL database:
+If you already config your project well on Google API Console, it could be downloaded by following steps: "Google API Manager > Credentials > OAuth 2.0 client IDs > Download Json".
+
+**Database Integration**
+
+* Execute the following sql statement to generate a new database on MySQL:
 
 ```sql
 CREATE DATABASE `demo`;
@@ -120,6 +123,6 @@ Then compile your edited scss file by following command for generating new css f
 npm run sass
 ```
 
-## Other Information
+## Further Reading
 
-* [Bower Github Page](https://github.com/bower/bower)
+* [ngRoute](https://docs.angularjs.org/api/ngRoute)
