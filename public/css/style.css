@@ -3,7 +3,7 @@ body {
 @font-face {
   body {
     font-family: "Roboto";
-    src: url("./Roboto-Regular.ttf"); } }
+    src: url("./Roboto/Roboto-Regular.ttf"); } }
 section.s1 {
   min-height: 100vh;
   width: 100%;

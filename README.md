@@ -39,7 +39,7 @@ We use Google Sign-In to offer a robust OAuth 2.0 service. Before you could real
 
 **Config files**
 
-Edit and rename all config files with `*_example*` filename, including client_secret_example.json, memberList_example.json and credentials_example.js. The following section will go into details for each file.
+Edit and rename all config files with `*_example*` as its filename, including client_secret_example.json, memberList_example.json and credentials_example.js. The following section will go into details for each file.
 
 * The file `properties/memberList.json` is used to store team structure and the following is its example:
 
@@ -56,7 +56,7 @@ Edit and rename all config files with `*_example*` filename, including client_se
 
 How to get the foleder field? First browse the correct folder using a browser, then you can find the corresponding folderId on the url column, paste them here.
 
-* The file credentials.js in root folder containing the connection string of MySQL database and is described as below:
+* The file `credentials.js` in root folder containing the connection string of MySQL database and is described as below:
 
 ```javascript
 module.exports = {
@@ -71,7 +71,7 @@ module.exports = {
 };
 ```
 
-* The file client_secret.json in credentials folder is described as below:
+* The file `client_secret.json` in credentials folder is described as below:
 
 Instead configure it manually, you should download it on your [google api console](https://console.developers.google.com/apis/credentials).
 
