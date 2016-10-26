@@ -27,13 +27,6 @@ Run the following command to install backend dependencies.
 ```sh
 # Install node modules
 npm install
-
-# Create the customized files
-mkdir credentials
-cd credentials/
-vi client_secret.json
-cd ..
-vi credentials.js
 ```
 
 At last, if you want to run it on production mode, remember to set the env variable `NPM_CONFIG_PRODUCTION=false`
@@ -46,7 +39,7 @@ We use Google Sign-In to offer a robust OAuth 2.0 service. Before you could real
 
 **Config files**
 
-All complete examples in this section can also be founded under config_example folder too.
+Edit and rename all config files with `*_example*` filename, including client_secret_example.json, memberList_example.json and credentials_example.js. The following section will go into details for each file.
 
 * The file `properties/memberList.json` is used to store team structure and the following is its example:
 
@@ -61,7 +54,7 @@ All complete examples in this section can also be founded under config_example f
 }
 ```
 
-First browse the correct folder using a browser, then you can find the corresponding folderId on the url column, paste them here.
+How to get the foleder field? First browse the correct folder using a browser, then you can find the corresponding folderId on the url column, paste them here.
 
 * The file credentials.js in root folder containing the connection string of MySQL database and is described as below:
 

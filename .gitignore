@@ -8,8 +8,9 @@ npm-debug.log
 
 # Project Specific
 backup
-credentials
 credentials.js
+client_secret.json
+memberList.json
 
 # Sass
 .sass-cache/
