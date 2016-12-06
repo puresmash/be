@@ -1,6 +1,6 @@
 ## About
 
-This project demo how to access Google Drive's metadata with Google single sign-on. It is powered by Angular.js and Node.js.
+This project demos how to access Google Drive's metadata with Google single sign-on. It is powered by Angular.js and Node.js.
 
 This project was first using in a class last summer. And it is my first project develop by MEAN stack(but I replace MongoDB with MySQL). In that course, everyone should take the responsibility for ensuring each other whether they submit their schedule on time every week. With the need to make the checking process easier and to practice my newly learned javascript skill. I decide to construct this tool to check the hand-in rate each week, so we can remind each other when they are in trouble.
 
@@ -54,9 +54,9 @@ Edit and rename all config files with `*_example*` as its filename, including cl
 }
 ```
 
-How to get the foleder field? First browse the correct folder using a browser, then you can find the corresponding folderId on the url column, paste them here.
+How to get the folder field? First browse the correct folder using a browser, then you can find the corresponding folderId on the url column, paste them here.
 
-* The file `credentials.js` in root folder containing the connection string of MySQL database and is described as below:
+* The file `credentials.js` in root folder containing the connection string to MySQL database and is described as below:
 
 ```javascript
 module.exports = {
@@ -110,7 +110,7 @@ sudo gem install sass
 sass -v
 ```
 
-Then compile your edited scss file by following command for generating new css file.
+Then compile your edited scss file by the following command for generating new css file.
 
 ```sh
 npm run sass
