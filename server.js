@@ -12,11 +12,7 @@ var credentials = require('./credentials.js')
 var mysql = require('mysql');
 
 var db;
-if(process.env.NPM_CONFIG_PRODUCTION)
-    db = mysql.createConnection(credentials.mysql.product.connectionString);
-else
-    db = mysql.createConnection(credentials.mysql.dev.connectionString);
-db.connect();
+
 
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({
@@ -170,13 +166,8 @@ app.listen(app.get('port'), app.get('ip'), function(){
                 app.get('port') + '; press Ctrl-C to terminate...');
 });
 
-
-
-
+//
 var SCOPES = ['https://www.googleapis.com/auth/drive.metadata.readonly'];
-var TOKEN_DIR = (process.env.HOME || process.env.HOMEPATH ||
-    process.env.USERPROFILE) + '/nodeJs/SocialLinker/credentials/';
-var TOKEN_PATH = TOKEN_DIR + 'gDriveViewer.json';
 
 var CLIENT_SECRET;
 var CLIENT_ID;
@@ -190,6 +181,19 @@ function configAuth(){
     CLIENT_SECRET = setting.client_secret;
     REDIRECT_URL = setting.redirect_uris[0];
 }
+
+(function initDB(){
+    if(process.env.NPM_CONFIG_PRODUCTION)
+        db = mysql.createConnection(credentials.mysql.product.connectionString);
+    else
+        db = mysql.createConnection(credentials.mysql.dev.connectionString);
+    db.connect(function(err){
+        if (err) {
+            console.error('Failed create connection to db');
+            return;
+        }
+    });
+})();
 
 //authorize(''/*JSON.parse(content)*/, searchFile);
 
